@@ -18,7 +18,7 @@ local function downloadFile(file)
     local url = baseUrl .. file
     print("Downloading " .. file .. " from " .. url)
     local success, message = pcall(function()
-        shell.run("wget", "-f", url, file)
+        shell.run("wget", url, file)
     end)
 
     if not success then
