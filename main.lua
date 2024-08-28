@@ -2,7 +2,6 @@
 
 local globals = require("globals")
 local inventory = require("inventory")
---local network = require("network")
 local gui = require("gui")
 
 parallel.waitForAny(
