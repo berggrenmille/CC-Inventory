@@ -7,7 +7,6 @@ local gui = require("gui")
 
 parallel.waitForAny(
     function() inventory.runInventory() end,
-    function() network.runRednet() end,
     function() gui.runGui() end
 )
 
