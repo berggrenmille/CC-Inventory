@@ -2,7 +2,7 @@
 -- fetch dependency
 shell.run("wget run https://basalt.madefor.cc/install.lua release latest.lua")
 
-local baseUrl = "https://raw.githubusercontent.com/berggrenmille/CC-Inventory/"
+local baseUrl = "https://raw.githubusercontent.com/berggrenmille/CC-Inventory/main/"
 
 -- List of files to download
 local files = {
