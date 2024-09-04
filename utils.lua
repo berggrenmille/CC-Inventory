@@ -18,7 +18,9 @@ local function load(filename)
     -- Open the file in read mode
     local file = fs.open(filename, "r")
     if not file then
-        error("Failed to open file for reading: " .. filename)
+        error("Creating file: " .. filename)
+        store(filename, {})
+        file = fs.open(filename, "r")
     end
 
     -- Read the entire file contents
