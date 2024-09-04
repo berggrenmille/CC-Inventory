@@ -199,6 +199,7 @@ end
 
 local function checkQuota()
     for thing, target in pairs(globals.quota) do
+        print(thing .. " " .. target)
         if thing.type == globals.quotaTypes.item then -- Item quota
             checkItem(thing, target.amount)
         else
