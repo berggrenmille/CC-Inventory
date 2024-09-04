@@ -7,11 +7,15 @@ local globals = require("globals")
 local function handleClientMessage(senderID, message)
     -- Ensure the message is a table and has expected keys
     if type(message) == "table" and message.action == "register" and message.station then
+        utils.debugPrint("Received station from client " .. senderID .. ": " .. textutils.serialize(message.station))
+        message.station.senderID = senderID
         -- Store the station information
         globals.stations[senderID] = message.station
 
         local hasInput = message.station.inputItems ~= nil or message.station.inputFluids ~= nil
         local hasOutput = message.station.outputItems ~= nil or message.station.outputFluids ~= nil
+
+
         if (hasInput and hasOutput) then
             globals.processors[senderID] = message.station
         elseif (hasInput) then
@@ -19,8 +23,6 @@ local function handleClientMessage(senderID, message)
         else
             globals.providers[senderID] = message.station
         end
-
-        utils.debugPrint("Registered station from client " .. senderID .. ": " .. textutils.serialize(message.station))
     else
         utils.debugPrint("Received invalid message from client " .. senderID)
     end

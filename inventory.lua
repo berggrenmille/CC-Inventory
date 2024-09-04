@@ -223,8 +223,25 @@ local function runInventory()
     end
 end
 
+local function addStation(station)
+    globals.stations[station.senderID] = station
+
+    local hasInput = station.inputItems or station.inputFluids
+    local hasOutput = station.outputItems or station.outputFluids
+
+
+    if (hasInput and hasOutput) then
+        globals.processors[station.senderID] = station
+    elseif (hasInput) then
+        globals.requesters[station.senderID] = station
+    else
+        globals.providers[station.senderID] = station
+    end
+end
+
 return {
     runInventory = runInventory,
     addFluidQuota = addFluidQuota,
-    addItemQuota = addItemQuota
+    addItemQuota = addItemQuota,
+    addStation = addStation
 }
