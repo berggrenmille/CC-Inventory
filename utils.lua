@@ -18,7 +18,6 @@ local function load(filename)
     -- Open the file in read mode
     local file = fs.open(filename, "r")
     if not file then
-        error("Creating file: " .. filename)
         store(filename, {})
         file = fs.open(filename, "r")
     end
