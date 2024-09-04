@@ -4,13 +4,13 @@ local utils = require("utils")
 
 local function addFluidQuota(name, amount)
     local fluid = { name = name, amount = amount, type = globals.quotaTypes.fluid }
-    globals.quota[fluid] = fluid
+    globals.quota[name] = fluid
     utils.store("quotas", globals.quota)
 end
 
 local function addItemQuota(name, amount)
     local item = { name = name, amount = amount, type = globals.quotaTypes.item }
-    globals.quota[item] = item
+    globals.quota[name] = item
     utils.store("quotas", globals.quota)
 end
 
