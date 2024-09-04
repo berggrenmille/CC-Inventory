@@ -10,6 +10,7 @@ local globals = {
 
     rs = peripheral.find("rsBridge"), -- Refined storage peripheral
     modem = peripheral.find("modem"), -- Modem peripheral
+    channel = 5,
     stationTypes = {
         provider = "provider",
         processor = "processor",

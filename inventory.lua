@@ -217,5 +217,7 @@ local function runInventory()
 end
 
 return {
-    runInventory = runInventory
+    runInventory = runInventory,
+    addFluidQuota = addFluidQuota,
+    addItemQuota = addItemQuota
 }

@@ -23,6 +23,11 @@ local function runGui()
         write("> ")
         local input = read()
 
+        if input == "debug" then
+            debug = not debug
+            print("Debug mode:", debug and "enabled" or "disabled")
+        end
+
         -- Trim and split the input into command and arguments
         local command, name, amount = input:match("^(%S+)%s*(%S*)%s*(%d*)$")
 
