@@ -11,7 +11,8 @@ local files = {
     "inventory.lua",
     "network.lua",
     "gui.lua",
-    "utils.lua"
+    "utils.lua",
+    "debug.lua"
 }
 
 -- Function to download a file with error handling

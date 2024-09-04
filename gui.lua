@@ -2,7 +2,8 @@
 local basalt = require("basalt")
 local globals = require("globals")
 local inventory = require("inventory")
-local debug = false
+local debug = require("debug")
+local debugVar = false
 
 local function debugPrint(...)
     if debug then
@@ -20,12 +21,15 @@ local function runGui()
     -- Main loop to handle terminal input
     while true do
         -- Prompt the user for input
+        ::start::
         write("> ")
         local input = read()
 
         if input == "debug" then
-            debug = not debug
-            print("Debug mode:", debug and "enabled" or "disabled")
+            debugVar = not debugVar
+            debug.setDebug(debugVar)
+            print("Debug mode:", debugVar and "enabled" or "disabled")
+            goto start
         end
 
         -- Trim and split the input into command and arguments
