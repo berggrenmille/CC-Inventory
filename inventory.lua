@@ -32,15 +32,18 @@ local function moveItemFromStorage(name, amount, station)
 end
 
 local function moveItemToStorage(name, amount, station)
+    utils.debugPrint("Moving item to storage: " .. name .. " with amount: " .. amount)
     local item = { name = name, amount = amount }
     local target = nil
     for _, value in pairs(station.outputItems) do
         if value.name == name then
+            utils.debugPrint("Found item in station: " .. station.name)
             target = value.inventory
             break
         end
     end
     local result = globals.rs.importItemFromPeripheral(item, target)
+    utils.debugPrint("Result: " .. tostring(result))
     if not result then
         print("Failed to move item to storage")
     end
