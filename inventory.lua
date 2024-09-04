@@ -229,6 +229,10 @@ local function addStation(station)
     local hasInput = station.inputItems or station.inputFluids
     local hasOutput = station.outputItems or station.outputFluids
 
+    utils.debugPrint("Adding station: " .. station.name .. " with senderID: " .. station.senderID)
+    utils.debugPrint("Station has input: " .. tostring(hasInput))
+    utils.debugPrint("Station has output: " .. tostring(hasOutput))
+
 
     if (hasInput and hasOutput) then
         globals.processors[station.senderID] = station
