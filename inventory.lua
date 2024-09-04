@@ -15,12 +15,12 @@ local function addItemQuota(name, amount)
 end
 
 local function moveItemFromStorage(name, amount, station)
-    local item = { name = name, amount = amount }
+    local item = { name = name, count = amount }
     local target = nil
     for _, value in pairs(station.inputItems) do
         if value.name == name then
             target = value.inventory
-            item.amount = value.amount - amount
+            item.count = value.amount - amount
             break
         end
     end
@@ -33,7 +33,7 @@ end
 
 local function moveItemToStorage(name, amount, station)
     utils.debugPrint("Moving item to storage: " .. name .. " with amount: " .. amount)
-    local item = { name = name, amount = amount }
+    local item = { name = name, count = amount }
     local target = nil
     for _, value in pairs(station.outputItems) do
         if value.name == name then
