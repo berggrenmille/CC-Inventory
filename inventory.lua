@@ -1,7 +1,6 @@
 -- inventory.lua
 local globals = require("globals")
 local utils = require("utils")
-local debug = require("debug")
 
 local function addFluidQuota(name, amount)
     local fluid = { name = name, amount = amount, type = globals.quotaTypes.fluid }
@@ -112,23 +111,23 @@ local function fillStation(station)
 end
 
 local function checkItem(thing, expected)
-    debug.debugPrint("Checking item: " .. thing .. " with expected amount: " .. expected)
+    utils.debugPrint("Checking item: " .. thing .. " with expected amount: " .. expected)
     local item = globals.rs.getItem({ name = thing })
     if not item then
         return
     end
     local amount = item.amount
 
-    debug.debugPrint("Current amount: " .. amount)
+    utils.debugPrint("Current amount: " .. amount)
 
     if amount > expected then return end
 
     -- Find a provider station with the item
     for _, station in ipairs(globals.providers) do
-        debug.debugPrint("Checking provider station: " .. station.name)
+        utils.debugPrint("Checking provider station: " .. station.name)
         for _, item in ipairs(station.outputItems) do
             if item.name == thing then
-                debug.debugPrint("Found item in provider station: " .. station.name)
+                utils.debugPrint("Found item in provider station: " .. station.name)
                 moveItemToStorage(thing, expected - amount, station)
                 if globals.rs.getItem({ name = thing }).amount >= expected then
                     return
@@ -139,10 +138,10 @@ local function checkItem(thing, expected)
 
     -- Find a processor station with the item
     for _, station in ipairs(globals.processors) do
-        debug.debugPrint("Checking processor station: " .. station.name)
+        utils.debugPrint("Checking processor station: " .. station.name)
         for _, item in ipairs(station.outputItems) do
             if item.name == thing then
-                debug.debugPrint("Found item in processor station: " .. station.name)
+                utils.debugPrint("Found item in processor station: " .. station.name)
                 -- move output items to storage
                 moveItemToStorage(thing, expected - amount, station)
                 -- return if we have enough items

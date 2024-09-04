@@ -1,5 +1,5 @@
 -- Import required modules
-local debug = require("debug")
+local utils = require("utils")
 local globals = require("globals")
 
 
@@ -20,9 +20,9 @@ local function handleClientMessage(senderID, message)
             globals.providers[senderID] = message.station
         end
 
-        debug.debugPrint("Registered station from client " .. senderID .. ": " .. textutils.serialize(message.station))
+        utils.debugPrint("Registered station from client " .. senderID .. ": " .. textutils.serialize(message.station))
     else
-        debug.debugPrint("Received invalid message from client " .. senderID)
+        utils.debugPrint("Received invalid message from client " .. senderID)
     end
 end
 
@@ -36,7 +36,7 @@ local function runNetwork()
     -- Open Rednet using the specified modem
     rednet.open(globals.modemSide)
     rednet.host(globals.protocol, globals.host)
-    debug.debugPrint("Rednet started on modem: " .. tostring(globals.modem))
+    utils.debugPrint("Rednet started on modem: " .. tostring(globals.modem))
 
     -- Main loop to listen for incoming messages
     while true do

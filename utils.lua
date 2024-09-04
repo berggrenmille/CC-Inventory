@@ -35,7 +35,19 @@ local function load(filename)
     return object
 end
 
+local debug = false
+local function debugPrint(...)
+    if debug then
+        print(...)
+    end
+end
+local function setDebug(value)
+    debug = value
+end
+
 return {
     store = store,
-    load = load
+    load = load,
+    debugPrint = debugPrint,
+    setDebug = setDebug
 }
