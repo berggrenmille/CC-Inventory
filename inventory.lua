@@ -26,7 +26,7 @@ local function moveItemFromStorage(name, amount, station)
     end
     if (item.amount <= 0) then return end
     local result = globals.rs.exportItemToPeripheral(item, target)
-    if result == nil then
+    if not result then
         print("Failed to move item from storage")
     end
 end
@@ -41,7 +41,7 @@ local function moveItemToStorage(name, amount, station)
         end
     end
     local result = globals.rs.importItemFromPeripheral(item, target)
-    if result == nil then
+    if not result then
         print("Failed to move item to storage")
     end
 end
@@ -56,7 +56,7 @@ local function moveFluidFromStorage(name, count, station)
         end
     end
     local result = globals.rs.exportFluidToPeripheral(fluid, target)
-    if result == nil then
+    if not result then
         print("Failed to move fluid from storage")
     end
 end
@@ -71,7 +71,7 @@ local function moveFluidToStorage(name, count, station)
         end
     end
     local result = globals.rs.importFluidFromPeripheral(fluid, target)
-    if result == nil then
+    if not result then
         print("Failed to move fluid to storage")
     end
 end
@@ -112,7 +112,7 @@ end
 
 local function checkItem(thing, expected)
     local item = globals.rs.getItem(thing)
-    if item == nil then
+    if not item then
         return
     end
     local amount = item.amount
@@ -160,7 +160,7 @@ end
 
 local function checkFluid(thing, expected)
     local fluid = getFluid(thing.name)
-    if fluid == nil then
+    if not fluid then
         return
     end
     local amount = fluid.amount
