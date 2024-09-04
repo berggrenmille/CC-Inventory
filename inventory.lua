@@ -1,6 +1,7 @@
 -- inventory.lua
 local globals = require("globals")
 local utils = require("utils")
+local gui = require("gui")
 
 local function addFluidQuota(name, amount)
     local fluid = { name = name, amount = amount, type = globals.quotaTypes.fluid }
@@ -111,18 +112,23 @@ local function fillStation(station)
 end
 
 local function checkItem(thing, expected)
+    gui.debugPrint("Checking item: " .. thing .. " with expected amount: " .. expected)
     local item = globals.rs.getItem({ name = thing })
     if not item then
         return
     end
     local amount = item.amount
 
+    gui.debugPrint("Current amount: " .. amount)
+
     if amount > expected then return end
 
     -- Find a provider station with the item
     for _, station in ipairs(globals.providers) do
+        gui.debugPrint("Checking provider station: " .. station.name)
         for _, item in ipairs(station.outputItems) do
             if item.name == thing then
+                gui.debugPrint("Found item in provider station: " .. station.name)
                 moveItemToStorage(thing, expected - amount, station)
                 if globals.rs.getItem({ name = thing }).amount >= expected then
                     return
@@ -133,8 +139,10 @@ local function checkItem(thing, expected)
 
     -- Find a processor station with the item
     for _, station in ipairs(globals.processors) do
+        gui.debugPrint("Checking processor station: " .. station.name)
         for _, item in ipairs(station.outputItems) do
             if item.name == thing then
+                gui.debugPrint("Found item in processor station: " .. station.name)
                 -- move output items to storage
                 moveItemToStorage(thing, expected - amount, station)
                 -- return if we have enough items
