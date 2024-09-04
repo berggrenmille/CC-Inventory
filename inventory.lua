@@ -200,9 +200,9 @@ end
 local function checkQuota()
     for thing, target in pairs(globals.quota) do
         if thing.type == globals.quotaTypes.item then -- Item quota
-            checkItem(thing)
+            checkItem(thing, target.amount)
         else
-            checkFluid(thing)
+            checkFluid(thing, target.amount)
         end
     end
 end
