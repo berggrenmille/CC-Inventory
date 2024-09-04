@@ -10,7 +10,8 @@ local files = {
     "globals.lua",
     "inventory.lua",
     "network.lua",
-    "gui.lua"
+    "gui.lua",
+    "utils.lua"
 }
 
 -- Function to download a file with error handling
