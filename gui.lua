@@ -2,7 +2,7 @@
 local basalt = require("basalt")
 local globals = require("globals")
 local inventory = require("inventory")
-local debug = require("debug")
+local utils = require("utils")
 local debugVar = false
 
 local function debugPrint(...)
@@ -27,7 +27,7 @@ local function runGui()
 
         if input == "debug" then
             debugVar = not debugVar
-            debug.setDebug(debugVar)
+            utils.setDebug(debugVar)
             print("Debug mode:", debugVar and "enabled" or "disabled")
             goto start
         end
