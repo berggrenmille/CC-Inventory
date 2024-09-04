@@ -17,7 +17,7 @@ end
 local function moveItemFromStorage(name, amount, station)
     local item = { name = name, amount = amount }
     local target = nil
-    for index, value in ipairs(station.inputItems) do
+    for _, value in pairs(station.inputItems) do
         if value.name == name then
             target = value.inventory
             item.amount = value.amount - amount
@@ -34,7 +34,7 @@ end
 local function moveItemToStorage(name, amount, station)
     local item = { name = name, amount = amount }
     local target = nil
-    for index, value in ipairs(station.outputItems) do
+    for _, value in pairs(station.outputItems) do
         if value.name == name then
             target = value.inventory
             break
@@ -49,7 +49,7 @@ end
 local function moveFluidFromStorage(name, count, station)
     local fluid = { name = name, count = count }
     local target = nil
-    for index, value in ipairs(station.inputFluids) do
+    for _, value in pairs(station.inputFluids) do
         if value.name == name then
             target = value.inventory
             break
@@ -64,7 +64,7 @@ end
 local function moveFluidToStorage(name, count, station)
     local fluid = { name = name, count = count }
     local target = nil
-    for index, value in ipairs(station.outputFluids) do
+    for _, value in pairs(station.outputFluids) do
         if value.name == name then
             target = value.inventory
             break
@@ -77,7 +77,7 @@ local function moveFluidToStorage(name, count, station)
 end
 
 local function fillStation(station)
-    for _, value in ipairs(station.inputItems) do
+    for _, value in pairs(station.inputItems) do
         local inventory = peripheral.wrap(value.inventory)
         if not inventory then
             print("Failed to wrap peripheral: " .. value.inventory .. " : " .. station.name)
@@ -93,7 +93,7 @@ local function fillStation(station)
         moveItemFromStorage(value.name, value.amount - currentAmount, station)
     end
 
-    for _, value in ipairs(station.inputFluids) do
+    for _, value in pairs(station.inputFluids) do
         local inventory = peripheral.wrap(value.inventory)
         if not inventory then
             print("Failed to wrap peripheral: " .. value.inventory .. " : " .. station.name)
@@ -120,12 +120,13 @@ local function checkItem(thing, expected)
 
     utils.debugPrint("Current amount: " .. amount)
 
-    if amount > expected then return end
-
+    if amount > expected then
+        return
+    end
     -- Find a provider station with the item
-    for _, station in ipairs(globals.providers) do
+    for id, station in pairs(globals.providers) do
         utils.debugPrint("Checking provider station: " .. station.name)
-        for _, item in ipairs(station.outputItems) do
+        for _, item in pairs(station.outputItems) do
             if item.name == thing then
                 utils.debugPrint("Found item in provider station: " .. station.name)
                 moveItemToStorage(thing, expected - amount, station)
@@ -137,9 +138,9 @@ local function checkItem(thing, expected)
     end
 
     -- Find a processor station with the item
-    for _, station in ipairs(globals.processors) do
+    for _, station in pairs(globals.processors) do
         utils.debugPrint("Checking processor station: " .. station.name)
-        for _, item in ipairs(station.outputItems) do
+        for _, item in pairs(station.outputItems) do
             if item.name == thing then
                 utils.debugPrint("Found item in processor station: " .. station.name)
                 -- move output items to storage
@@ -158,7 +159,7 @@ end
 
 local function getFluid(name)
     local fluids = globals.rs.listFluids()
-    for _, fluid in ipairs(fluids) do
+    for _, fluid in pairs(fluids) do
         if fluid.name == name then
             return fluid
         end
@@ -175,8 +176,8 @@ local function checkFluid(thing, expected)
     if amount > expected then return end
 
     -- Find a provider station with the fluid
-    for _, station in ipairs(globals.providers) do
-        for _, item in ipairs(station.outputFluids) do
+    for _, station in pairs(globals.providers) do
+        for _, item in pairs(station.outputFluids) do
             if item.name == thing.name then
                 moveFluidToStorage(thing.name, expected - amount, station)
                 if getFluid(thing.name).amount >= expected then
@@ -187,8 +188,8 @@ local function checkFluid(thing, expected)
     end
 
     -- Find a processor station with the fluid
-    for _, station in ipairs(globals.processors) do
-        for _, item in ipairs(station.outputFluids) do
+    for _, station in pairs(globals.processors) do
+        for _, item in pairs(station.outputFluids) do
             if item.name == fluid.name then
                 -- move output items to storage
                 moveFluidToStorage(thing.name, expected - amount, station)
