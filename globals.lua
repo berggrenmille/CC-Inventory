@@ -1,13 +1,15 @@
 -- globals.lua
+local utils = require("utils")
+
 local globals = {
     error = "",
-    quota = {},                         -- Shared quotas for items
-    providers = {},                     -- List of provider stations
-    processors = {},                    -- List of processor stations
-    requesters = {},                    -- List of requester stations
+    providers = {},                   -- List of provider stations
+    processors = {},                  -- List of processor stations
+    requesters = {},                  -- List of requester stations
+    stations = {},                    -- List of all stations
 
-    rs = peripheral.wrap("rsBridge_0"), -- Refined storage peripheral
-    modem = peripheral.wrap("top"),     -- Modem peripheral
+    rs = peripheral.find("rsBridge"), -- Refined storage peripheral
+    modem = peripheral.find("modem"), -- Modem peripheral
     stationTypes = {
         provider = "provider",
         processor = "processor",
@@ -16,7 +18,8 @@ local globals = {
     quotaTypes = {
         item = "item",
         fluid = "fluid"
-    }
+    },
+    quota = utils.load("quotas") -- Shared quotas for items
 }
 
 return globals
