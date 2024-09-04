@@ -41,7 +41,7 @@ local function runNetwork()
     -- Main loop to listen for incoming messages
     while true do
         -- Wait for incoming messages with a timeout (optional, to allow non-blocking checks)
-        local senderID, message, protocol = rednet.receive(nil, 5)
+        local senderID, message, protocol = rednet.receive("inventoryComm")
 
         -- If a message is received, handle it
         if senderID then
