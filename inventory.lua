@@ -198,12 +198,11 @@ local function checkFluid(thing, expected)
 end
 
 local function checkQuota()
-    for thing, target in pairs(globals.quota) do
-        print(thing .. " " .. target)
-        if thing.type == globals.quotaTypes.item then -- Item quota
-            checkItem(thing, target.amount)
+    for key, value in pairs(globals.quota) do
+        if value.type == globals.quotaTypes.item then -- Item quota
+            checkItem(key, value.amount)
         else
-            checkFluid(thing, target.amount)
+            checkFluid(key, value.amount)
         end
     end
 end
