@@ -24,7 +24,7 @@ local function moveItemFromStorage(name, amount, station)
             break
         end
     end
-    if (item.amount <= 0) then return end
+    if (item.count <= 0) then return end
     local result = globals.rs.exportItemToPeripheral(item, target)
     if not result then
         print("Failed to move item from storage")
