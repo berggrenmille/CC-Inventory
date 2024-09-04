@@ -42,8 +42,8 @@ local function runGui()
 
         -- Handle AddFluid command
         if command == "AddFluid" and name and amount then
-            if inventory.AddFluidQuota then
-                inventory.AddFluidQuota(name, amount)
+            if inventory.addFluidQuota then
+                inventory.addFluidQuota(name, amount)
                 print("Added fluid:", name, "with amount:", amount)
             else
                 print("Error: AddFluidQuota function not found in the inventory module.")
@@ -51,8 +51,8 @@ local function runGui()
 
             -- Handle AddItem command
         elseif command == "AddItem" and name and amount then
-            if inventory.AddItemQuota then
-                inventory.AddItemQuota(name, amount)
+            if inventory.addItemQuota then
+                inventory.addItemQuota(name, amount)
                 print("Added item:", name, "with amount:", amount)
             else
                 print("Error: AddItemQuota function not found in the inventory module.")
