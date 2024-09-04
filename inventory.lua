@@ -111,7 +111,7 @@ local function fillStation(station)
 end
 
 local function checkItem(thing, expected)
-    local item = globals.rs.getItem(thing)
+    local item = globals.rs.getItem({ name = thing })
     if not item then
         return
     end
@@ -122,9 +122,9 @@ local function checkItem(thing, expected)
     -- Find a provider station with the item
     for _, station in ipairs(globals.providers) do
         for _, item in ipairs(station.outputItems) do
-            if item.name == thing.name then
-                moveItemToStorage(thing.name, expected - amount, station)
-                if globals.rs.getItem(thing).amount >= expected then
+            if item.name == thing then
+                moveItemToStorage(thing, expected - amount, station)
+                if globals.rs.getItem({ name = thing }).amount >= expected then
                     return
                 end
             end
@@ -134,11 +134,11 @@ local function checkItem(thing, expected)
     -- Find a processor station with the item
     for _, station in ipairs(globals.processors) do
         for _, item in ipairs(station.outputItems) do
-            if item.name == thing.name then
+            if item.name == thing then
                 -- move output items to storage
-                moveItemToStorage(thing.name, expected - amount, station)
+                moveItemToStorage(thing, expected - amount, station)
                 -- return if we have enough items
-                if globals.rs.getItem(thing).amount >= expected then
+                if globals.rs.getItem({ name = thing }).amount >= expected then
                     return
                 end
                 -- fill the processor with input items
