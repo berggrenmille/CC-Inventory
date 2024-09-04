@@ -1,4 +1,4 @@
-debug = false
+local debug = false
 local function debugPrint(...)
     if debug then
         print(...)
