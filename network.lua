@@ -29,7 +29,7 @@ end
 -- Function to run the Rednet network
 local function runNetwork()
     -- Check if the modem is present
-    if not globals.modem then
+    if not peripheral.wrap(globals.modemSide) then
         error("Modem not found. Please ensure a wireless modem exists")
     end
 
