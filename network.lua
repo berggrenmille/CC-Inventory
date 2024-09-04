@@ -34,7 +34,8 @@ local function runNetwork()
     end
 
     -- Open Rednet using the specified modem
-    globals.modem.open(globals.channel)
+    rednet.open(globals.modemSide)
+    rednet.host(globals.protocol, globals.host)
     gui.debugPrint("Rednet started on modem: " .. tostring(globals.modem))
 
     -- Main loop to listen for incoming messages

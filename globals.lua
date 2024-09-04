@@ -9,8 +9,9 @@ local globals = {
     stations = {},                    -- List of all stations
 
     rs = peripheral.find("rsBridge"), -- Refined storage peripheral
-    modem = peripheral.find("modem"), -- Modem peripheral
-    channel = 5,
+    modemSide = "top",                -- Side of the modem
+    protocol = "inventoryComm",
+    host = "inventoryServer",
     stationTypes = {
         provider = "provider",
         processor = "processor",
