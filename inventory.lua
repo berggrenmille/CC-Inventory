@@ -158,6 +158,11 @@ local function checkItem(thing, expected)
             end
         end
     end
+
+    if (globals.rs.isItemCraftable { name = thing } and not globals.rs.isItemCrafting({ name = thing })) then
+        globals.rs.craftItem { name = thing, count = expected - amount }
+        return
+    end
 end
 
 local function getFluid(name)
