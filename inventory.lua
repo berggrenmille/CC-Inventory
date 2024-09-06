@@ -123,7 +123,7 @@ local function checkItem(thing, expected)
 
     utils.debugPrint("Current amount: " .. amount)
 
-    if amount > expected then
+    if amount >= expected then
         return
     end
     -- Find a provider station with the item
@@ -181,7 +181,7 @@ local function checkFluid(thing, expected)
     end
     local amount = fluid.amount
 
-    if amount > expected then return end
+    if amount >= expected then return end
 
     -- Find a provider station with the fluid
     for _, station in pairs(globals.providers) do
