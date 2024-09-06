@@ -14,6 +14,11 @@ local function addItemQuota(name, amount)
     utils.store("quotas", globals.quota)
 end
 
+local function removeQuota(name)
+    globals.quota[name] = nil
+    utils.store("quotas", globals.quota)
+end
+
 local function moveItemFromStorage(name, amount, station)
     local item = { name = name, count = amount }
     local target = nil
@@ -256,5 +261,6 @@ return {
     runInventory = runInventory,
     addFluidQuota = addFluidQuota,
     addItemQuota = addItemQuota,
-    addStation = addStation
+    addStation = addStation,
+    removeQuota = removeQuota
 }
