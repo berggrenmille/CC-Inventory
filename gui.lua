@@ -22,7 +22,7 @@ local function runGui()
     local function updateList()
         list:clear()
         for name, quota in pairs(globals.quota) do
-            list:addItem(name .. ": " .. quota.amount)
+            list:addItem(name .. ": " .. quota.amount, colors.black, colors.white)
         end
     end
 
@@ -40,7 +40,6 @@ local function runGui()
     local isFluid = main:addCheckbox("isFluid")
         :setPosition("inputAmount.x + inputAmount.w + 5", "quotas.h + 5")
         :setSize("parent.w * 0.1", "parent.h * 0.05")
-        :setText("Fluid")
 
     -- Add and remove buttons under input
     local addButton = main:addButton("addButton")
@@ -66,7 +65,7 @@ local function runGui()
         end
         updateList()
     end
-    addButton:onClicked(addClicked)
+    addButton:onClick(addClicked)
 
     local function removeClicked()
         local name = inputName:getValue()
@@ -77,7 +76,7 @@ local function runGui()
         inventory.removeQuota(name)
         updateList()
     end
-    removeButton:onClicked(removeClicked)
+    removeButton:onClick(removeClicked)
 
     basalt.autoUpdate()
 end
