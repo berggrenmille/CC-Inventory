@@ -7,11 +7,24 @@ local debugVar = false
 
 local function debugPrint(...)
     if debug then
-        print(...)
+        basalt.debug(...)
     end
 end
 
 local function runGui()
+    local main = basalt.createFrame() -- The main frame/most important frame in your project
+    local button = main               --> Basalt returns an instance of the object on most methods, to make use of "call-chaining"
+        :addButton()                  --> This is an example of call chaining
+        :setPosition(4, 4)
+        :setText("Click me!")
+        :onClick(
+            function()
+                basalt.debug("I got clicked!")
+            end)
+
+    basalt.autoUpdate()
+
+
     -- Display a welcome message
     print("Welcome to the Inventory Management System!")
     print("Available commands:")
