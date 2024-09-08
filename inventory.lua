@@ -88,7 +88,7 @@ local function fillStation(station)
     for _, value in pairs(station.inputItems) do
         local inventory = peripheral.wrap(value.inventory)
         if not inventory then
-            print("Failed to wrap peripheral: " .. value.inventory .. " : " .. station.name)
+            gui.debugPrint("Failed to wrap peripheral: " .. value.inventory .. " : " .. station.name)
             break
         end
         local itemInfo = inventory.getItemDetail(value.name)
@@ -119,24 +119,19 @@ local function fillStation(station)
 end
 
 local function checkItem(thing, expected)
-    utils.debugPrint("Checking item: " .. thing .. " with expected amount: " .. expected)
     local item = globals.rs.getItem({ name = thing })
     if not item then
         return
     end
     local amount = item.amount
 
-    utils.debugPrint("Current amount: " .. amount)
-
     if amount >= expected then
         return
     end
     -- Find a provider station with the item
     for id, station in pairs(globals.providers) do
-        utils.debugPrint("Checking provider station: " .. station.name)
         for _, item in pairs(station.outputItems) do
             if item.name == thing then
-                utils.debugPrint("Found item in provider station: " .. station.name)
                 moveItemToStorage(thing, expected - amount, station)
                 if globals.rs.getItem({ name = thing }).amount >= expected then
                     return
@@ -147,11 +142,9 @@ local function checkItem(thing, expected)
 
     -- Find a processor station with the item
     for _, station in pairs(globals.processors) do
-        utils.debugPrint("Checking processor station: " .. station.name)
         if station.outputItems then
             for _, item in pairs(station.outputItems) do
                 if item.name == thing then
-                    utils.debugPrint("Found item in processor station: " .. station.name)
                     -- move output items to storage
                     moveItemToStorage(thing, expected - amount, station)
                     -- return if we have enough items
@@ -244,11 +237,6 @@ local function addStation(station)
 
     local hasInput = station.inputItems or station.inputFluids
     local hasOutput = station.outputItems or station.outputFluids
-
-    utils.debugPrint("Adding station: " .. station.name .. " with senderID: " .. station.senderID)
-    utils.debugPrint("Station has input: " .. tostring(hasInput))
-    utils.debugPrint("Station has output: " .. tostring(hasOutput))
-
 
     if (hasInput and hasOutput) then
         globals.processors[station.senderID] = station
