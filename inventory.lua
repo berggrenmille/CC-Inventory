@@ -84,6 +84,17 @@ local function moveFluidToStorage(name, count, station)
     end
 end
 
+local function getItemInfo(name, inventory)
+    local items = inventory.list()
+    local count = 0
+    for _, item in pairs(items) do
+        if item.name == name then
+            count = count + item.count
+        end
+    end
+    return { name = name, count = count }
+end
+
 local function fillStation(station)
     for _, value in pairs(station.inputItems) do
         local inventory = peripheral.wrap(value.inventory)
@@ -91,7 +102,7 @@ local function fillStation(station)
             gui.debugPrint("Failed to wrap peripheral: " .. value.inventory .. " : " .. station.name)
             break
         end
-        local itemInfo = inventory.getItemDetail(value.name)
+        local itemInfo = getItemInfo(value.name, inventory)
         local currentAmount
         if not itemInfo then
             currentAmount = 0
@@ -228,6 +239,11 @@ local function runInventory()
     while true do
         -- Check if the quota is reached
         checkQuota()
+
+        for _, station in pairs(globals.requesters) do
+            fillStation(station)
+        end
+
         os.sleep(1) -- To prevent excessive CPU usage
     end
 end
