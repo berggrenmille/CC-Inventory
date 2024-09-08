@@ -96,7 +96,7 @@ local function getItemInfo(name, inventory)
 end
 
 local function fillStation(station)
-    for _, value in pairs(station.inputItems) do
+    for _, value in pairs((station.inputItems) or {}) do
         local inventory = peripheral.wrap(value.inventory)
         if not inventory then
             gui.debugPrint("Failed to wrap peripheral: " .. value.inventory .. " : " .. station.name)
@@ -112,7 +112,7 @@ local function fillStation(station)
         moveItemFromStorage(value.name, value.amount - currentAmount, station)
     end
 
-    for _, value in pairs(station.inputFluids) do
+    for _, value in pairs((station.inputFluids or {})) do
         local inventory = peripheral.wrap(value.inventory)
         if not inventory then
             print("Failed to wrap peripheral: " .. value.inventory .. " : " .. station.name)
