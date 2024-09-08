@@ -19,26 +19,21 @@ local function runGui()
         :setSize("parent.w - 2", "parent.h * 0.5")
         :setScrollable(true)
 
-    local function updateList()
+    local updateList = basalt.schedule(function()
         list:clear()
         for name, quota in pairs(globals.quota) do
             list:addItem(name .. ": " .. quota.amount, colors.black, colors.white)
         end
-    end
+    end)
 
-    -- Adjusting Timer Setup
-    local listTimer = main:addTimer() -- Ensure the timer is added to the main frame
-        :onCall(updateList)           -- Set the function to be called
-        :setTime(1)                   -- Set time in seconds (1 second interval)
-        :start()                      -- Ensure the timer is started
-
+    updateList()
     -- Descriptive Labels
     main:addLabel()
-        :setPosition(2, "quotas.h + 1")
+        :setPosition(2, "quotas.h + 3")
         :setText("Item Name:")
 
     local inputName = main:addInput("inputName")
-        :setPosition(2, "quotas.h + 2")
+        :setPosition(2, "quotas.h + 4")
         :setSize("parent.w * 0.4", 1)
 
     main:addLabel()
@@ -58,18 +53,19 @@ local function runGui()
 
     -- Add and Remove Buttons centered at the bottom
     local buttonWidth = (main:getSize() - 6) * 0.3 -- 30% of the screen width
+    local buttonHeight = 3
     local spacing = 2
     local totalWidth = buttonWidth * 2 + spacing
 
     local addButton = main:addButton("addButton")
         :setPosition("(parent.w - " .. totalWidth .. ") / 2", "parent.h - 3")
-        :setSize(buttonWidth, 2)
+        :setSize(buttonWidth, buttonHeight)
         :setText("Add")
         :setBackground(colors.green)
 
     local removeButton = main:addButton("removeButton")
         :setPosition("(parent.w + " .. spacing .. ") / 2", "parent.h - 3")
-        :setSize(buttonWidth, 2)
+        :setSize(buttonWidth, buttonHeight)
         :setText("Remove")
         :setBackground(colors.red)
 
