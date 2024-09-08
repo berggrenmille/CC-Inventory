@@ -148,18 +148,20 @@ local function checkItem(thing, expected)
     -- Find a processor station with the item
     for _, station in pairs(globals.processors) do
         utils.debugPrint("Checking processor station: " .. station.name)
-        for _, item in pairs(station.outputItems) do
-            if item.name == thing then
-                utils.debugPrint("Found item in processor station: " .. station.name)
-                -- move output items to storage
-                moveItemToStorage(thing, expected - amount, station)
-                -- return if we have enough items
-                if globals.rs.getItem({ name = thing }).amount >= expected then
-                    return
+        if station.outputItems then
+            for _, item in pairs(station.outputItems) do
+                if item.name == thing then
+                    utils.debugPrint("Found item in processor station: " .. station.name)
+                    -- move output items to storage
+                    moveItemToStorage(thing, expected - amount, station)
+                    -- return if we have enough items
+                    if globals.rs.getItem({ name = thing }).amount >= expected then
+                        return
+                    end
+                    -- fill the processor with input items
+                    fillStation(station)
+                    break
                 end
-                -- fill the processor with input items
-                fillStation(station)
-                break
             end
         end
     end
