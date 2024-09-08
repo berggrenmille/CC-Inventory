@@ -50,6 +50,8 @@ local function runGui()
 
     local isFluid = main:addCheckbox("isFluid")
         :setPosition("inputAmount.w + inputAmount.x + 1", "inputAmount.y")
+        :setBackground(colors.black)
+        :setForeground(colors.white)
 
     -- Add and Remove Buttons centered at the bottom
     local buttonWidth = (main:getSize() - 6) * 0.3 -- 30% of the screen width
