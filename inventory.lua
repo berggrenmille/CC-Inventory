@@ -31,6 +31,15 @@ local function moveToStorage(name, count, isFluid, target)
     return result or 0
 end
 
+local function getFluid(name)
+    local fluids = globals.rs.listFluids()
+    for _, fluid in pairs(fluids) do
+        if fluid.name == name then
+            return fluid
+        end
+    end
+end
+
 local function getResourceInfo(name, isFluid, target)
     if not target then
         -- get the amount of the resource in the system
@@ -45,10 +54,10 @@ local function getResourceInfo(name, isFluid, target)
                     .isCraftable
             }
         else
-            local fluid = globals.rs.getFluid({ name = name })
+            local fluid = getFluid(name)
             if not fluid then return { name = name, count = 0, type = globals.quotaTypes.fluid, isCraftable = false } end
             return {
-                name = fluid.name,
+                name = name,
                 count = fluid.count,
                 type = globals.quotaTypes.fluid,
                 isCraftable = fluid
