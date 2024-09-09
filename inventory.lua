@@ -113,7 +113,7 @@ end
 local function emptyStation(station)
     for _, value in pairs(station.outputItems or {}) do
         local currentItemInfo = getResourceInfo(value.name, false)
-        local itemQuota = (globals.quota[value.name].count or 0)
+        local itemQuota = (globals.quota[value.name] and globals.quota[value.name].count) or 0
 
         if currentItemInfo.count < itemQuota then
             local moveCount = itemQuota - currentItemInfo.count
@@ -123,7 +123,7 @@ local function emptyStation(station)
 
     for _, value in pairs(station.outputFluids or {}) do
         local currentFluidInfo = getResourceInfo(value.name, true)
-        local fluidQuota = (globals.quota[value.name].count or 0)
+        local fluidQuota = (globals.quota[value.name] and globals.quota[value.name].count) or 0
 
         if currentFluidInfo.count < fluidQuota then
             local moveCount = fluidQuota - currentFluidInfo.count
