@@ -50,12 +50,12 @@ local function getResourceInfo(name, isFluid, target)
         if not isFluid then
             local item = globals.rs.getItem({ name = name })
             if not item then return { name = name, count = 0, type = globals.quotaTypes.item, isCraftable = false } end
+            local craftable = globals.rs.isItemCraftable({ name = name })
             return {
                 name = name,
                 count = item.amount,
                 type = globals.quotaTypes.item,
-                isCraftable = item
-                    .isCraftable
+                isCraftable = craftable
             }
         else
             local fluid = getFluid(name)
