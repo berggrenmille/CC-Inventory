@@ -100,7 +100,7 @@ local function runGui()
 
     list:onSelect(function(self, event, item)
         inputName:setValue(item.args.name)
-        inputAmount:setValue(item.args.amount)
+        inputAmount:setValue(item.args.count)
         isFluid:setValue(item.args.isFluid)
     end)
 
