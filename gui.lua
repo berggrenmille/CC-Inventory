@@ -3,7 +3,7 @@ local basalt = require("basalt")
 local globals = require("globals")
 local inventory = require("inventory")
 local utils = require("utils")
-local debugVar = false
+local debugVar = true
 
 local function debugPrint(...)
     if debugVar then
