@@ -138,11 +138,11 @@ end
 local function runInventory()
     -- Access shared variables like globals.quota
     while true do
-        for _, station in pairs(globals.providers) do
+        for _, station in pairs((globals.providers or {})) do
             emptyStation(station)
         end
 
-        for key, value in pairs(globals.quota) do
+        for key, value in pairs((globals.quota or {})) do
             if value.type == globals.quotaTypes.item then
                 local itemInfo = getResourceInfo(key, false)
                 if itemInfo.isCraftable and not globals.rs.isItemCrafting({ name = value.name }) then
@@ -165,7 +165,7 @@ local function runInventory()
             end
         end
 
-        for _, station in pairs(globals.requesters) do
+        for _, station in pairs((globals.requesters or {})) do
             fillStation(station)
         end
         os.sleep(1) -- To prevent excessive CPU usage
