@@ -40,6 +40,10 @@ local function getFluid(name)
     end
 end
 
+local function wrapPeripheral(target)
+    return globals.rs.wrap(target)
+end
+
 local function getResourceInfo(name, isFluid, target)
     if not target then
         -- get the amount of the resource in the system
@@ -66,8 +70,8 @@ local function getResourceInfo(name, isFluid, target)
         end
     end
 
-    local targetPeripheral = globals.rs.wrap(target)
-    if not targetPeripheral then
+    local status, targetPeripheral = pcall(globals.rs.wrap, target)
+    if status == 0 then
         return {
             name = name,
             count = 0,
