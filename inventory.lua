@@ -172,6 +172,21 @@ local function runInventory()
     end
 end
 
+local function addQuota(name, count, isFluid)
+    globals.quota[name] = {
+        name = name,
+        count = count,
+        type = isFluid and globals.quotaTypes.fluid or
+            globals.quotaTypes.item
+    }
+    utils.store("quotas", globals.quota)
+end
+
+local function removeQuota(name)
+    globals.quota[name] = nil
+    utils.store("quotas", globals.quota)
+end
+
 local function addStation(station)
     globals.stations[station.senderID] = station
 
@@ -194,6 +209,9 @@ local function addStation(station)
             else
                 table.insert(globals.stationsByInput[item.name], station)
             end
+            if (not globals.quota[item.name]) then
+                addQuota(item.name, 0, false)
+            end
         end
 
         for _, item in pairs(station.inputFluids or {}) do
@@ -202,6 +220,10 @@ local function addStation(station)
                 globals.stationsByInput[item.name] = { station }
             else
                 table.insert(globals.stationsByInput[item.name], station)
+            end
+
+            if (not globals.quota[item.name]) then
+                addQuota(item.name, 0, true)
             end
         end
     end
@@ -214,6 +236,10 @@ local function addStation(station)
             else
                 table.insert(globals.stationsByOutput[item.name], station)
             end
+
+            if (not globals.quota[item.name]) then
+                addQuota(item.name, 0, false)
+            end
         end
 
         for _, item in pairs(station.outputFluids or {}) do
@@ -223,24 +249,15 @@ local function addStation(station)
             else
                 table.insert(globals.stationsByOutput[item.name], station)
             end
+
+            if (not globals.quota[item.name]) then
+                addQuota(item.name, 0, true)
+            end
         end
     end
 end
 
-local function addQuota(name, count, isFluid)
-    globals.quota[name] = {
-        name = name,
-        count = count,
-        type = isFluid and globals.quotaTypes.fluid or
-            globals.quotaTypes.item
-    }
-    utils.store("quotas", globals.quota)
-end
 
-local function removeQuota(name)
-    globals.quota[name] = nil
-    utils.store("quotas", globals.quota)
-end
 
 return {
     runInventory = runInventory,
