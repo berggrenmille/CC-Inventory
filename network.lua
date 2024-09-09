@@ -1,17 +1,17 @@
 -- Import required modules
-local utils = require("utils")
 local globals = require("globals")
 local inventory = require("inventory")
+local gui = require("gui")
 
 -- Function to handle incoming messages from clients
 local function handleClientMessage(senderID, message)
     -- Ensure the message is a table and has expected keys
     if type(message) == "table" and message.action == "register" and message.station then
-        utils.debugPrint("Received station from client " .. senderID .. ": " .. textutils.serialize(message.station))
+        gui.debugPrint("Received station from client " .. senderID .. ": " .. textutils.serialize(message.station))
         message.station.senderID = senderID
-        inventory.addStation(message.station)
+        globals.addStation(message.station)
     else
-        utils.debugPrint("Received invalid message from client " .. senderID)
+        gui.debugPrint("Received invalid message from client " .. senderID)
     end
 end
 
@@ -25,7 +25,7 @@ local function runNetwork()
     -- Open Rednet using the specified modem
     rednet.open(globals.modemSide)
     rednet.host(globals.protocol, globals.host)
-    utils.debugPrint("Rednet started on modem: " .. tostring(globals.modem))
+    gui.debugPrint("Rednet started on modem: " .. tostring(globals.modem))
 
     -- Main loop to listen for incoming messages
     while true do

@@ -79,9 +79,9 @@ local function runGui()
             return
         end
         if isFluid:getValue() then
-            inventory.addFluidQuota(name, amount)
+            inventory.addQuota(name, amount, true)
         else
-            inventory.addItemQuota(name, amount)
+            inventory.addQuota(name, amount, false)
         end
         updateList()
     end

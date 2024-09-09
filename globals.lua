@@ -7,16 +7,13 @@ local globals = {
     processors = {},                  -- List of processor stations
     requesters = {},                  -- List of requester stations
     stations = {},                    -- List of all stations
+    stationsByInput = {},             -- List of stations by input
+    stationsByOutput = {},            -- List of stations by output
 
     rs = peripheral.find("rsBridge"), -- Refined storage peripheral
     modemSide = "top",                -- Side of the modem
     protocol = "inventoryComm",
     host = "inventoryServer",
-    stationTypes = {
-        provider = "provider",
-        processor = "processor",
-        requester = "requester"
-    },
     quotaTypes = {
         item = "item",
         fluid = "fluid"
@@ -24,4 +21,7 @@ local globals = {
     quota = utils.load("quotas") -- Shared quotas for items
 }
 
-return globals
+
+return {
+    globals = globals,
+}

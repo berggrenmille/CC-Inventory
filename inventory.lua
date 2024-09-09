@@ -2,248 +2,172 @@
 local globals = require("globals")
 local utils = require("utils")
 
-local function addFluidQuota(name, amount)
-    local fluid = { name = name, amount = amount, type = globals.quotaTypes.fluid }
-    globals.quota[name] = fluid
-    utils.store("quotas", globals.quota)
+
+local function moveFromStorage(name, count, isFluid, target)
+    local resource = { name = name, count = count }
+
+    if (resource.count <= 0) then return 0 end
+
+    local result = nil
+    if isFluid then
+        result = globals.rs.exportFluidToPeripheral(resource, target)
+    else
+        result = globals.rs.exportItemToPeripheral(resource, target)
+    end
+    return result or 0
 end
 
-local function addItemQuota(name, amount)
-    local item = { name = name, amount = amount, type = globals.quotaTypes.item }
-    globals.quota[name] = item
-    utils.store("quotas", globals.quota)
+local function moveToStorage(name, count, isFluid, target)
+    local resource = { name = name, count = count }
+
+    if (resource.count <= 0) then return 0 end
+
+    local result = nil
+    if isFluid then
+        result = globals.rs.importFluidFromPeripheral(resource, target)
+    else
+        result = globals.rs.importItemFromPeripheral(resource, target)
+    end
+    return result or 0
 end
 
-local function removeQuota(name)
-    globals.quota[name] = nil
-    utils.store("quotas", globals.quota)
-end
-
-local function moveItemFromStorage(name, amount, station)
-    local item = { name = name, count = amount }
-    local target = nil
-    for _, value in pairs(station.inputItems) do
-        if value.name == name then
-            target = value.inventory
-            item.count = value.amount - amount
-            break
+local function getResourceInfo(name, isFluid, target)
+    if not target then
+        -- get the amount of the resource in the system
+        if not isFluid then
+            local item = globals.rs.getItem(name)
+            if not item then return { name = name, count = 0, type = globals.quotaTypes.item, isCraftable = false } end
+            return {
+                name = item.name,
+                count = item.count,
+                type = globals.quotaTypes.item,
+                isCraftable = item
+                    .isCraftable
+            }
+        else
+            local fluid = globals.rs.getFluid(name)
+            if not fluid then return { name = name, count = 0, type = globals.quotaTypes.fluid, isCraftable = false } end
+            return {
+                name = fluid.name,
+                count = fluid.count,
+                type = globals.quotaTypes.fluid,
+                isCraftable = fluid
+                    .isCraftable
+            }
         end
     end
-    if (item.count <= 0) then return end
-    local result = globals.rs.exportItemToPeripheral(item, target)
-    if not result then
-        print("Failed to move item from storage")
-    end
-end
 
-local function moveItemToStorage(name, amount, station)
-    utils.debugPrint("Moving item to storage: " .. name .. " with amount: " .. amount)
-    local item = { name = name, count = amount }
-    local target = nil
-    for _, value in pairs(station.outputItems) do
-        if value.name == name then
-            utils.debugPrint("Found item in station: " .. station.name)
-            target = value.inventory
-            break
-        end
+    local targetPeripheral = globals.rs.wrap(target)
+    if not targetPeripheral then
+        return {
+            name = name,
+            count = 0,
+            type = isFluid and globals.quotaTypes.fluid or
+                globals.quotaTypes.item,
+            isCraftable = false
+        }
     end
-    local result = globals.rs.importItemFromPeripheral(item, target)
-    utils.debugPrint("Result: " .. tostring(result))
-    if not result then
-        print("Failed to move item to storage")
-    end
-end
 
-local function moveFluidFromStorage(name, count, station)
-    local fluid = { name = name, count = count }
-    local target = nil
-    for _, value in pairs(station.inputFluids) do
-        if value.name == name then
-            target = value.inventory
-            break
+    if isFluid then
+        -- target is create fluid tank
+        local fluidInfo = targetPeripheral.getInfo()
+        if not fluidInfo then return { name = name, count = 0, type = globals.quotaTypes.fluid, isCraftable = false } end
+        return {
+            name = fluidInfo.name,
+            count = fluidInfo.amount,
+            type = globals.quotaTypes.fluid,
+            isCraftable = false
+        }
+    else
+        -- taget is inventory
+        local itemList = targetPeripheral.list()
+        local count = 0
+        for _, item in pairs(itemList) do
+            if item.name == name then
+                count = count + item.count
+            end
         end
+        return {
+            name = name,
+            count = count,
+            type = globals.quotaTypes.item,
+            isCraftable = false
+        }
     end
-    local result = globals.rs.exportFluidToPeripheral(fluid, target)
-    if not result then
-        print("Failed to move fluid from storage")
-    end
-end
-
-local function moveFluidToStorage(name, count, station)
-    local fluid = { name = name, count = count }
-    local target = nil
-    for _, value in pairs(station.outputFluids) do
-        if value.name == name then
-            target = value.inventory
-            break
-        end
-    end
-    local result = globals.rs.importFluidFromPeripheral(fluid, target)
-    if not result then
-        print("Failed to move fluid to storage")
-    end
-end
-
-local function getItemInfo(name, inventory)
-    local items = inventory.list()
-    local count = 0
-    for _, item in pairs(items) do
-        if item.name == name then
-            count = count + item.count
-        end
-    end
-    return { name = name, count = count }
 end
 
 local function fillStation(station)
-    for _, value in pairs((station.inputItems) or {}) do
-        local inventory = peripheral.wrap(value.inventory)
-        if not inventory then
-            gui.debugPrint("Failed to wrap peripheral: " .. value.inventory .. " : " .. station.name)
-            break
-        end
-        local itemInfo = getItemInfo(value.name, inventory)
-        local currentAmount
-        if not itemInfo then
-            currentAmount = 0
-        else
-            currentAmount = itemInfo.count
-        end
-        moveItemFromStorage(value.name, value.amount - currentAmount, station)
+    for _, value in pairs(station.inputItems or {}) do
+        local itemInfo = getResourceInfo(value.name, false, value.inventory)
+        local moveCount = value.count - itemInfo.count
+        moveFromStorage(value.name, moveCount, false, value.inventory)
     end
 
-    for _, value in pairs((station.inputFluids or {})) do
-        local inventory = peripheral.wrap(value.inventory)
-        if not inventory then
-            print("Failed to wrap peripheral: " .. value.inventory .. " : " .. station.name)
-            break
-        end
-        local fluidInfo = inventory.getInfo()
-        local currentAmount
-        if not fluidInfo then
-            currentAmount = 0
-        else
-            currentAmount = fluidInfo.amount
-        end
-        moveFluidFromStorage(value.name, value.count - currentAmount, station)
+    for _, value in pairs(station.inputFluids or {}) do
+        local fluidInfo = getResourceInfo(value.name, true, value.inventory)
+        local moveCount = value.count - fluidInfo.count
+        moveFromStorage(value.name, moveCount, true, value.inventory)
     end
 end
 
-local function checkItem(thing, expected)
-    local item = globals.rs.getItem({ name = thing })
-    if not item then
-        return
-    end
-    local amount = item.amount
+local function emptyStation(station)
+    for _, value in pairs(station.outputItems or {}) do
+        local currentItemInfo = getResourceInfo(value.name, false)
+        local itemQuota = (globals.quota[value.name].count or 0)
 
-    if amount >= expected then
-        return
-    end
-    -- Find a provider station with the item
-    for id, station in pairs(globals.providers) do
-        for _, item in pairs(station.outputItems) do
-            if item.name == thing then
-                moveItemToStorage(thing, expected - amount, station)
-                if globals.rs.getItem({ name = thing }).amount >= expected then
-                    return
-                end
-            end
+        if currentItemInfo.count < itemQuota then
+            local moveCount = itemQuota - currentItemInfo.count
+            moveToStorage(value.name, moveCount, false, value.inventory)
         end
     end
 
-    -- Find a processor station with the item
-    for _, station in pairs(globals.processors) do
-        if station.outputItems then
-            for _, item in pairs(station.outputItems) do
-                if item.name == thing then
-                    -- move output items to storage
-                    moveItemToStorage(thing, expected - amount, station)
-                    -- return if we have enough items
-                    if globals.rs.getItem({ name = thing }).amount >= expected then
-                        return
-                    end
-                    -- fill the processor with input items
-                    fillStation(station)
-                    break
-                end
-            end
-        end
-    end
+    for _, value in pairs(station.outputFluids or {}) do
+        local currentFluidInfo = getResourceInfo(value.name, true)
+        local fluidQuota = (globals.quota[value.name].count or 0)
 
-    if (globals.rs.isItemCraftable { name = thing } and not globals.rs.isItemCrafting({ name = thing })) then
-        globals.rs.craftItem { name = thing, count = expected - amount }
-        return
-    end
-end
-
-local function getFluid(name)
-    local fluids = globals.rs.listFluids()
-    for _, fluid in pairs(fluids) do
-        if fluid.name == name then
-            return fluid
+        if currentFluidInfo.count < fluidQuota then
+            local moveCount = fluidQuota - currentFluidInfo.count
+            moveToStorage(value.name, moveCount, true, value.inventory)
         end
     end
 end
 
-local function checkFluid(thing, expected)
-    local fluid = getFluid(thing.name)
-    if not fluid then
-        return
-    end
-    local amount = fluid.amount
 
-    if amount >= expected then return end
 
-    -- Find a provider station with the fluid
-    for _, station in pairs(globals.providers) do
-        for _, item in pairs(station.outputFluids) do
-            if item.name == thing.name then
-                moveFluidToStorage(thing.name, expected - amount, station)
-                if getFluid(thing.name).amount >= expected then
-                    return
-                end
-            end
-        end
-    end
-
-    -- Find a processor station with the fluid
-    for _, station in pairs(globals.processors) do
-        for _, item in pairs(station.outputFluids) do
-            if item.name == fluid.name then
-                -- move output items to storage
-                moveFluidToStorage(thing.name, expected - amount, station)
-                -- return if we have enough items
-                if getFluid(thing.name).amount >= expected then
-                    return
-                end
-                -- fill the processor with input items
-                fillStation(station)
-                break
-            end
-        end
-    end
-end
-
-local function checkQuota()
-    for key, value in pairs(globals.quota) do
-        if value.type == globals.quotaTypes.item then -- Item quota
-            checkItem(key, value.amount)
-        else
-            checkFluid(key, value.amount)
-        end
-    end
-end
 
 local function runInventory()
     -- Access shared variables like globals.quota
     while true do
-        -- Check if the quota is reached
-        checkQuota()
+        for _, station in pairs(globals.providers) do
+            emptyStation(station)
+        end
+
+        for key, value in pairs(globals.quota) do
+            if value.type == globals.quotaTypes.item then
+                local itemInfo = getResourceInfo(key, false)
+                if itemInfo.isCraftable and not globals.rs.isItemCrafting({ name = value.name }) then
+                    globals.rs.craftItem { name = value.name, count = value.count - itemInfo.count }
+                end
+                if itemInfo.count < value.count then
+                    for _, station in pairs((globals.stationsByOutput[key] or {})) do
+                        fillStation(station)
+                        emptyStation(station)
+                    end
+                end
+            else
+                local fluidInfo = getResourceInfo(key, true)
+                if fluidInfo.count < value.count then
+                    for _, station in pairs((globals.stationsByOutput[key] or {})) do
+                        fillStation(station)
+                        emptyStation(station)
+                    end
+                end
+            end
+        end
 
         for _, station in pairs(globals.requesters) do
             fillStation(station)
         end
-
         os.sleep(1) -- To prevent excessive CPU usage
     end
 end
@@ -261,12 +185,66 @@ local function addStation(station)
     else
         globals.providers[station.senderID] = station
     end
+
+    if hasInput then
+        for _, item in pairs(station.inputItems or {}) do
+            local entry = globals.stationsByInput[item.name]
+            if not entry then
+                globals.stationsByInput[item.name] = { station }
+            else
+                table.insert(globals.stationsByInput[item.name], station)
+            end
+        end
+
+        for _, item in pairs(station.inputFluids or {}) do
+            local entry = globals.stationsByInput[item.name]
+            if not entry then
+                globals.stationsByInput[item.name] = { station }
+            else
+                table.insert(globals.stationsByInput[item.name], station)
+            end
+        end
+    end
+
+    if hasOutput then
+        for _, item in pairs(station.outputItems or {}) do
+            local entry = globals.stationsByOutput[item.name]
+            if not entry then
+                globals.stationsByOutput[item.name] = { station }
+            else
+                table.insert(globals.stationsByOutput[item.name], station)
+            end
+        end
+
+        for _, item in pairs(station.outputFluids or {}) do
+            local entry = globals.stationsByOutput[item.name]
+            if not entry then
+                globals.stationsByOutput[item.name] = { station }
+            else
+                table.insert(globals.stationsByOutput[item.name], station)
+            end
+        end
+    end
+end
+
+local function addQuota(name, count, isFluid)
+    globals.quota[name] = {
+        name = name,
+        count = count,
+        type = isFluid and globals.quotaTypes.fluid or
+            globals.quotaTypes.item
+    }
+    utils.store("quotas", globals.quota)
+end
+
+local function removeQuota(name)
+    globals.quota[name] = nil
+    utils.store("quotas", globals.quota)
 end
 
 return {
     runInventory = runInventory,
-    addFluidQuota = addFluidQuota,
-    addItemQuota = addItemQuota,
+    addQuota = addQuota,
     addStation = addStation,
     removeQuota = removeQuota
 }

@@ -13,5 +13,4 @@ parallel.waitForAny(
 
 
 -- log something when wrong
-print("Done")
-print("error: ", globals.error)
+gui.debugPrint("error: " .. (globals.error or "none"))
