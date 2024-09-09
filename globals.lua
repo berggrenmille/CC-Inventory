@@ -22,6 +22,4 @@ local globals = {
 }
 
 
-return {
-    globals = globals,
-}
+return globals
