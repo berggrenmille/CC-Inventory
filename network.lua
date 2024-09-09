@@ -9,7 +9,7 @@ local function handleClientMessage(senderID, message)
     if type(message) == "table" and message.action == "register" and message.station then
         gui.debugPrint("Received station from client " .. senderID .. ": " .. textutils.serialize(message.station))
         message.station.senderID = senderID
-        globals.addStation(message.station)
+        inventory.addStation(message.station)
     else
         gui.debugPrint("Received invalid message from client " .. senderID)
     end
