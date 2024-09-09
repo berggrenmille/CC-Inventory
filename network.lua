@@ -7,7 +7,6 @@ local gui = require("gui")
 local function handleClientMessage(senderID, message)
     -- Ensure the message is a table and has expected keys
     if type(message) == "table" and message.action == "register" and message.station then
-        gui.debugPrint("Received station from client " .. senderID .. ": " .. textutils.serialize(message.station))
         message.station.senderID = senderID
         inventory.addStation(message.station)
     else

@@ -70,7 +70,7 @@ local function getResourceInfo(name, isFluid, target)
         end
     end
 
-    local status, targetPeripheral = pcall(globals.rs.wrap, target)
+    local status, targetPeripheral = pcall(peripheral.wrap, target)
     if status == 0 then
         return {
             name = name,

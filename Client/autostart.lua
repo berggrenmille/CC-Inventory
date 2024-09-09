@@ -17,5 +17,10 @@ local message = {
 }
 
 rednet.open(modemside)
-local serverId = rednet.lookup("inventoryComm", "inventoryServer")
-rednet.send(serverId, message, "inventoryComm")
+
+
+while true do
+    local serverId = rednet.lookup("inventoryComm", "inventoryServer")
+    rednet.send(serverId, message, "inventoryComm")
+    os.sleep(60)
+end
