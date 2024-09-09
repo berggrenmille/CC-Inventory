@@ -154,12 +154,11 @@ local function runInventory()
         for key, value in pairs((globals.quota or {})) do
             if value.type == globals.quotaTypes.item then
                 local itemInfo = getResourceInfo(key, false)
-                if itemInfo.isCraftable and not globals.rs.isItemCrafting({ name = value.name }) then
-                    if itemInfo.count < value.count then
+
+                if itemInfo.count < value.count then
+                    if itemInfo.isCraftable and not globals.rs.isItemCrafting({ name = value.name }) then
                         globals.rs.craftItem { name = value.name, count = value.count - itemInfo.count }
                     end
-                end
-                if itemInfo.count < value.count then
                     for _, station in pairs((globals.stationsByOutput[key] or {})) do
                         fillStation(station)
                         emptyStation(station)
