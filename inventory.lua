@@ -38,8 +38,8 @@ local function getResourceInfo(name, isFluid, target)
             local item = globals.rs.getItem({ name = name })
             if not item then return { name = name, count = 0, type = globals.quotaTypes.item, isCraftable = false } end
             return {
-                name = item.name,
-                count = item.count,
+                name = name,
+                count = item.amount,
                 type = globals.quotaTypes.item,
                 isCraftable = item
                     .isCraftable
