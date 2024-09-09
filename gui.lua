@@ -22,7 +22,7 @@ local function runGui()
     local updateList = basalt.schedule(function()
         list:clear()
         for name, quota in pairs(globals.quota) do
-            list:addItem(name .. ": " .. quota.amount, colors.black, colors.white, quota)
+            list:addItem(name .. ": " .. quota.count, colors.black, colors.white, quota)
         end
     end)
 
