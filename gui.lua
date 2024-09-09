@@ -22,7 +22,7 @@ local function runGui()
     local updateList = basalt.schedule(function()
         list:clear()
         for name, quota in pairs(globals.quota) do
-            list:addItem(name .. ": " .. quota.amount, colors.black, colors.white)
+            list:addItem(name .. ": " .. quota.amount, colors.black, colors.white, quota)
         end
     end)
 
@@ -97,6 +97,12 @@ local function runGui()
         updateList()
     end
     removeButton:onClick(removeClicked)
+
+    list:onSelect(function(self, event, item)
+        inputName:setValue(item.args.name)
+        inputAmount:setValue(item.args.amount)
+        isFluid:setValue(item.args.isFluid)
+    end)
 
     basalt.autoUpdate()
 end
