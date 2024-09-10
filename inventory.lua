@@ -35,7 +35,7 @@ local function getFluid(name)
     local fluids = globals.rs.listFluids()
     for _, fluid in pairs(fluids) do
         if fluid.name == name then
-            return fluid
+            return { name = fluid.name, count = fluid.amount, isCraftable = fluid.isCraftable }
         end
     end
 end
